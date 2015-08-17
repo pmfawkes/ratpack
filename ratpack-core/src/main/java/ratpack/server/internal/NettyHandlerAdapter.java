@@ -69,7 +69,7 @@ public class NettyHandlerAdapter extends SimpleChannelInboundHandler<FullHttpReq
   private final ExecControl execControl;
 
   public NettyHandlerAdapter(Registry serverRegistry, Handler handler) throws Exception {
-    super(true);
+    super(false);
 
     this.handlers = ChainHandler.unpack(handler);
     this.serverRegistry = serverRegistry;
@@ -94,6 +94,7 @@ public class NettyHandlerAdapter extends SimpleChannelInboundHandler<FullHttpReq
   public void channelRead0(final ChannelHandlerContext ctx, final FullHttpRequest nettyRequest) throws Exception {
     if (!nettyRequest.decoderResult().isSuccess()) {
       sendError(ctx, HttpResponseStatus.BAD_REQUEST);
+      nettyRequest.release();
       return;
     }
 
